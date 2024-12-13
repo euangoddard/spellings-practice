@@ -1,0 +1,11 @@
+:root {
+  --notif-bg-opacity: 0.3;
+}
+
+.bg-success-translucent {
+  background-color: oklch(var(--su) / var(--notif-bg-opacity));
+}
+
+.bg-error-translucent {
+  background-color: oklch(var(--er) / var(--notif-bg-opacity));
+}

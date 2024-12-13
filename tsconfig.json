@@ -19,10 +19,8 @@
     "paths": {
       "~/*": ["./src/*"]
     },
-    "types": [
-        "@cloudflare/workers-types/2023-07-01"
-    ]
+    "types": ["@cloudflare/workers-types/2023-07-01"]
   },
-  "files": ["./.eslintrc.cjs"],
+  "files": [".eslintrc.cjs"],
   "include": ["src", "./*.d.ts", "./*.config.ts"]
 }
