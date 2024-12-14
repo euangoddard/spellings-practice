@@ -56,14 +56,17 @@ export default component$(() => {
   );
 });
 
-export const head: DocumentHead = {
-  title: "Spelling practice - well done!",
-  meta: [
-    {
-      name: "description",
-      content: "Spelling practice game to help you improve your spelling",
-    },
-  ],
+export const head: DocumentHead = ({ resolveValue }) => {
+  const challenge = resolveValue(useChallenge);
+  return {
+    title: `Spelling practice: "${challenge!.name}" complete!`,
+    meta: [
+      {
+        name: "description",
+        content: `You finished "${challenge!.name}"`,
+      },
+    ],
+  };
 };
 
 function buildConfetti(x: number, y: number): void {

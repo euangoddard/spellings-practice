@@ -39,15 +39,19 @@ const getNextUrl = (challenge: Challenge, index: number) => {
   return `/complete/${challenge.id}`;
 };
 
-// TODO: make this dynamic
-export const head: DocumentHead = {
-  title: "Spelling practice - practice time!",
-  meta: [
-    {
-      name: "description",
-      content: "Spelling practice game to help you improve your spelling",
-    },
-  ],
+export const head: DocumentHead = ({ resolveValue }) => {
+  const challengeSession = resolveValue(useChallengeSession);
+  const challengeName = challengeSession?.challenge.name ?? "Spelling practice";
+  const index = (challengeSession?.index ?? 0) + 1;
+  return {
+    title: `Spelling practice: "${challengeName}" - word ${index}`,
+    meta: [
+      {
+        name: "description",
+        content: `Challenge "${challengeName}", word ${index} of ${challengeSession!.challenge.spellings.length} words`,
+      },
+    ],
+  };
 };
 
 interface ChallengeSession {

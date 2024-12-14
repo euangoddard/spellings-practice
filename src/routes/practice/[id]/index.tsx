@@ -68,14 +68,17 @@ export default component$(() => {
   );
 });
 
-export const head: DocumentHead = {
-  title: "Spelling practice - practice time!",
-  meta: [
-    {
-      name: "description",
-      content: "Spelling practice game to help you improve your spelling",
-    },
-  ],
+export const head: DocumentHead = ({ resolveValue }) => {
+  const challenge = resolveValue(useChallenge);
+  return {
+    title: `Spelling practice: "${challenge!.name}"`,
+    meta: [
+      {
+        name: "description",
+        content: `Challenge "${challenge!.name}" containing ${challenge!.spellings.length} words`,
+      },
+    ],
+  };
 };
 
 export const useChallenge = routeLoader$<Challenge | undefined>(
