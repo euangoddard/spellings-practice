@@ -1,4 +1,4 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, useSignal } from "@builder.io/qwik";
 import { AnswerState } from "~/shared/models";
 
 export interface ContinueButtonProps {
@@ -8,11 +8,26 @@ export interface ContinueButtonProps {
 
 export const ContinueButton = component$<ContinueButtonProps>(
   ({ state, nextUrl }) => {
-    const btnClass =
-      state === AnswerState.Correct ? "btn-success" : "btn-error";
+    const isLoading = useSignal(false);
+    const btnClasses = [
+      "btn btn-block",
+      state === AnswerState.Correct ? "btn-success" : "btn-error",
+    ];
+    if (isLoading.value) {
+      btnClasses.push("btn-loading");
+    }
     return (
-      <a class={["btn btn-block", btnClass]} type="button" href={nextUrl}>
-        Continue
+      <a
+        class={btnClasses}
+        type="button"
+        href={nextUrl}
+        onPointerUp$={() => (isLoading.value = true)}
+      >
+        {isLoading.value ? (
+          <span class="loading loading-spinner" />
+        ) : (
+          "Continue"
+        )}
       </a>
     );
   },
