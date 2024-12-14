@@ -28,6 +28,7 @@ export const Keyboard = component$<KeyboardProps>(({ onKey$ }) => {
             <button
               class="btn btn-lg grow px-[12px] md:flex-none md:px-4"
               key={key}
+              preventdefault:pointerup
               onPointerUp$={() => {
                 vibrate(10);
                 onKey$(key);
