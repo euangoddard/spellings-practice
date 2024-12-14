@@ -1,5 +1,5 @@
 import { component$, Slot, useStyles$, type JSXOutput } from "@builder.io/qwik";
-import { AnswerState } from "~/utils/models";
+import { AnswerState } from "~/shared/models";
 import style from "./answer-notification.css?inline";
 
 export interface AnswerNotificationProps {

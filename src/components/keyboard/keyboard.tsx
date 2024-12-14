@@ -1,5 +1,5 @@
 import { $, component$, useOnDocument, type QRL } from "@builder.io/qwik";
-import { vibrate } from "~/utils/vibrate";
+import { vibrate } from "~/shared/vibrate";
 
 export interface KeyboardProps {
   onKey$: QRL<(key: string) => void>;

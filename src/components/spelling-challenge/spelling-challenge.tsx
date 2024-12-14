@@ -8,12 +8,12 @@ import {
   useVisibleTask$,
 } from "@builder.io/qwik";
 import { Keyboard } from "../keyboard/keyboard";
-import { AnswerState } from "~/utils/models";
+import { AnswerState } from "~/shared/models";
 import { AnswerNotification } from "../answer-notification/answer-notification";
 import styles from "./spelling-challenge.css?inline";
 import { ContinueButton } from "../continue-button/continue-button";
-import { sessionStore } from "~/utils/session-store";
-import { vibrate } from "~/utils/vibrate";
+import { sessionStore } from "~/shared/session-store";
+import { vibrate } from "~/shared/vibrate";
 
 export interface SpellingChallengeProps {
   word: string;

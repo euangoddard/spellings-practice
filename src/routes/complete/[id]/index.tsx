@@ -6,8 +6,8 @@ import {
 } from "@builder.io/qwik";
 import { type DocumentHead, Link, routeLoader$ } from "@builder.io/qwik-city";
 import { BottomNav } from "~/components/bottom-nav/bottom-nav";
-import { type Challenge, resolveChallenge } from "~/utils/loaders";
-import { sessionStore } from "~/utils/session-store";
+import { type Challenge, resolveChallenge } from "~/shared/loaders";
+import { sessionStore } from "~/shared/session-store";
 import { create as createConfetti } from "canvas-confetti";
 
 export default component$(() => {
@@ -43,7 +43,7 @@ export default component$(() => {
       </div>
       <BottomNav>
         <Link
-          href={`/practice/${challenge.value.id}`}
+          href={`/practice/${challenge.value.id}/`}
           class="btn btn-primary btn-block mb-2"
         >
           Play again

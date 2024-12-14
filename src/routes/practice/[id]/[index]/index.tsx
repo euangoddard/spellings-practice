@@ -2,7 +2,7 @@ import { component$, type ReadonlySignal } from "@builder.io/qwik";
 import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import { PracticeProgress } from "~/components/practice-progress/practice-progress";
 import { SpellingChallenge } from "~/components/spelling-challenge/spelling-challenge";
-import { type Challenge, resolveChallenge } from "~/utils/loaders";
+import { type Challenge, resolveChallenge } from "~/shared/loaders";
 
 export default component$(() => {
   const challengeSession =
@@ -34,9 +34,9 @@ export default component$(() => {
 
 const getNextUrl = (challenge: Challenge, index: number) => {
   if (index < challenge.spellings.length - 1) {
-    return `/practice/${challenge.id}/${index + 2}`;
+    return `/practice/${challenge.id}/${index + 2}/`;
   }
-  return `/complete/${challenge.id}`;
+  return `/complete/${challenge.id}/`;
 };
 
 export const head: DocumentHead = ({ resolveValue }) => {

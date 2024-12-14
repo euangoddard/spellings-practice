@@ -6,7 +6,7 @@ import {
   zod$,
   type DocumentHead,
 } from "@builder.io/qwik-city";
-import { generateBase62UUID } from "~/utils/random-id";
+import { generateBase62UUID } from "~/shared/random-id";
 
 export default component$(() => {
   const updateSpellings = useUpdateSpellings();

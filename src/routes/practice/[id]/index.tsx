@@ -5,8 +5,8 @@ import {
 } from "@builder.io/qwik";
 import { type DocumentHead, Link, routeLoader$ } from "@builder.io/qwik-city";
 import { BottomNav } from "~/components/bottom-nav/bottom-nav";
-import { type Challenge, resolveChallenge } from "~/utils/loaders";
-import { sessionStore } from "~/utils/session-store";
+import { type Challenge, resolveChallenge } from "~/shared/loaders";
+import { sessionStore } from "~/shared/session-store";
 
 export default component$(() => {
   const challenge = useChallenge() as ReadonlySignal<Challenge>;
@@ -58,7 +58,7 @@ export default component$(() => {
       </div>
       <BottomNav>
         <Link
-          href={`/practice/${challenge.value.id}/1`}
+          href={`/practice/${challenge.value.id}/1/`}
           class="btn btn-primary btn-block"
         >
           Start

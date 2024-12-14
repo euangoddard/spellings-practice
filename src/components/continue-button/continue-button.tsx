@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import { AnswerState } from "~/utils/models";
+import { AnswerState } from "~/shared/models";
 
 export interface ContinueButtonProps {
   state: AnswerState;
