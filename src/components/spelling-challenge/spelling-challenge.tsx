@@ -13,6 +13,7 @@ import { AnswerNotification } from "../answer-notification/answer-notification";
 import styles from "./spelling-challenge.css?inline";
 import { ContinueButton } from "../continue-button/continue-button";
 import { sessionStore } from "~/utils/session-store";
+import { vibrate } from "~/utils/vibrate";
 
 export interface SpellingChallengeProps {
   word: string;
@@ -92,7 +93,7 @@ export const SpellingChallenge = component$<SpellingChallengeProps>(
               if (key === "⌫") {
                 store.answer = store.answer.slice(0, -1);
               } else if (key === "↵") {
-                navigator.vibrate(50);
+                vibrate(50);
                 if (store.answer === word) {
                   store.state = AnswerState.Correct;
                   store.incrementScore();
@@ -112,7 +113,7 @@ export const SpellingChallenge = component$<SpellingChallengeProps>(
                 disabled={store.answer === ""}
                 type="button"
                 onClick$={() => {
-                  navigator.vibrate(50);
+                  vibrate(50);
                   if (store.answer === word) {
                     store.state = AnswerState.Correct;
                     store.incrementScore();

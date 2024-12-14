@@ -1,4 +1,5 @@
 import { $, component$, useOnDocument, type QRL } from "@builder.io/qwik";
+import { vibrate } from "~/utils/vibrate";
 
 export interface KeyboardProps {
   onKey$: QRL<(key: string) => void>;
@@ -27,8 +28,8 @@ export const Keyboard = component$<KeyboardProps>(({ onKey$ }) => {
             <button
               class="btn btn-lg grow px-[12px] md:flex-none md:px-4"
               key={key}
-              onClick$={() => {
-                navigator.vibrate(10);
+              onPointerUp$={() => {
+                vibrate(10);
                 onKey$(key);
               }}
             >
