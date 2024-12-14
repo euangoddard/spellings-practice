@@ -77,7 +77,7 @@ export const SpellingChallenge = component$<SpellingChallengeProps>(
           </svg>
           Listen to word
         </button>
-        <div class="mb-4 flex border-b border-accent p-4">
+        <div class="mb-4 flex border-b border-accent p-4 text-lg">
           {store.answer}
           <div class="cursor w-[1px] border-r border-neutral"></div>
           {!store.answer && (
@@ -92,6 +92,7 @@ export const SpellingChallenge = component$<SpellingChallengeProps>(
               if (key === "⌫") {
                 store.answer = store.answer.slice(0, -1);
               } else if (key === "↵") {
+                navigator.vibrate(50);
                 if (store.answer === word) {
                   store.state = AnswerState.Correct;
                   store.incrementScore();
@@ -111,6 +112,7 @@ export const SpellingChallenge = component$<SpellingChallengeProps>(
                 disabled={store.answer === ""}
                 type="button"
                 onClick$={() => {
+                  navigator.vibrate(50);
                   if (store.answer === word) {
                     store.state = AnswerState.Correct;
                     store.incrementScore();

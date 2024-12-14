@@ -20,15 +20,15 @@ export const Keyboard = component$<KeyboardProps>(({ onKey$ }) => {
     }),
   );
   return (
-    <div class="mb-4">
+    <div class="mb-4 px-4">
       {keys.map((row, index) => (
         <div class="mb-1 flex justify-center gap-1" key={index}>
           {row.split("").map((key) => (
             <button
-              class="btn px-[12px] md:px-4"
+              class="btn btn-lg grow px-[12px] md:flex-none md:px-4"
               key={key}
               onClick$={() => {
-                navigator.vibrate?.(10);
+                navigator.vibrate(10);
                 onKey$(key);
               }}
             >
