@@ -14,6 +14,7 @@ import styles from "./spelling-challenge.css?inline";
 import { ContinueButton } from "../continue-button/continue-button";
 import { sessionStore } from "~/shared/session-store";
 import { vibrate } from "~/shared/vibrate";
+import { AnswerValue } from "../answer-value/answer-value";
 
 export interface SpellingChallengeProps {
   word: string;
@@ -24,9 +25,12 @@ export interface SpellingChallengeProps {
 interface SpellingStore {
   state: AnswerState;
   answer: string;
+  attempt: number;
   score: number;
   incrementScore: QRL<(this: SpellingStore) => void>;
 }
+
+const maxAttempts = 3;
 
 export const SpellingChallenge = component$<SpellingChallengeProps>(
   ({ word, audioUrl, nextUrl }) => {
@@ -35,6 +39,7 @@ export const SpellingChallenge = component$<SpellingChallengeProps>(
       state: AnswerState.Pending,
       answer: "",
       score: 0,
+      attempt: 1,
       incrementScore: $(function (this: SpellingStore) {
         this.score += 1;
         sessionStore.set("score", this.score);
@@ -78,15 +83,7 @@ export const SpellingChallenge = component$<SpellingChallengeProps>(
           </svg>
           Listen to word
         </button>
-        <div class="mb-4 flex border-b border-accent p-4 text-lg">
-          {store.answer}
-          <div class="cursor w-[1px] border-r border-neutral"></div>
-          {!store.answer && (
-            <span class="select-none text-neutral-content">
-              Spell the word you hear
-            </span>
-          )}
-        </div>
+        <AnswerValue value={store.answer} />
         <div class="fixed bottom-0 left-0 right-0">
           <Keyboard
             onKey$={(key: string) => {
@@ -97,6 +94,9 @@ export const SpellingChallenge = component$<SpellingChallengeProps>(
                 if (store.answer === word) {
                   store.state = AnswerState.Correct;
                   store.incrementScore();
+                } else if (store.attempt < maxAttempts) {
+                  store.attempt += 1;
+                  store.state = AnswerState.Mistake;
                 } else {
                   store.state = AnswerState.Incorrect;
                 }
@@ -106,7 +106,11 @@ export const SpellingChallenge = component$<SpellingChallengeProps>(
             }}
           />
 
-          <AnswerNotification state={store.state} word={word}>
+          <AnswerNotification
+            state={store.state}
+            word={word}
+            attempts={1 + maxAttempts - store.attempt}
+          >
             {store.state === AnswerState.Pending ? (
               <button
                 class="btn btn-primary btn-block"
@@ -117,12 +121,26 @@ export const SpellingChallenge = component$<SpellingChallengeProps>(
                   if (store.answer === word) {
                     store.state = AnswerState.Correct;
                     store.incrementScore();
+                  } else if (store.attempt < maxAttempts) {
+                    store.attempt += 1;
+                    store.state = AnswerState.Mistake;
                   } else {
                     store.state = AnswerState.Incorrect;
                   }
                 }}
               >
                 Check
+              </button>
+            ) : store.state === AnswerState.Mistake ? (
+              <button
+                class="btn btn-warning btn-block"
+                type="button"
+                onClick$={() => {
+                  vibrate(50);
+                  store.state = AnswerState.Pending;
+                }}
+              >
+                Try again
               </button>
             ) : (
               <ContinueButton state={store.state} nextUrl={nextUrl} />
