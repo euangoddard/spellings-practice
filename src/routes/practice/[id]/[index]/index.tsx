@@ -15,13 +15,14 @@ export default component$(() => {
 
   return (
     <div class="mx-auto max-w-xl">
-      <h2 class="text-xl font-medium">
-        {challengeSession.value.challenge.name} challenge
-      </h2>
       <PracticeProgress
         total={challengeSession.value.challenge.spellings.length}
         completed={challengeSession.value.index + 1}
-      />
+      >
+        <h2 class="mb-2 text-xl font-medium">
+          {challengeSession.value.challenge.name} challenge
+        </h2>
+      </PracticeProgress>
 
       <SpellingChallenge
         word={challengeSession.value.word}

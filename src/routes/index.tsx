@@ -17,10 +17,9 @@ export default component$(() => {
     <div class="mx-auto max-w-xl">
       <h2 class="mb-2 text-xl font-medium">Enter spellings</h2>
       <p class="mb-4 max-w-prose leading-relaxed">
-        Choose a name for this spelling practice session, e.g. "
-        <em>Week 1 spellings</em>", then enter the spellings you want to
-        practice. You can enter as many spellings as you want. Each spelling
-        should be on a new line.
+        Name this spelling practice, e.g. "<em>Week 1 spellings</em>", then
+        enter the spellings. You can enter as many spellings as you want. Each
+        spelling should be on a new line.
       </p>
 
       <Form action={updateSpellings}>
@@ -39,14 +38,14 @@ export default component$(() => {
           <input
             type="text"
             class="grow"
-            placeholder="Something to identify these spellings"
+            placeholder="Name this practice"
             name="name"
             autoComplete="off"
           />
         </label>
         <div class="form-control">
           <textarea
-            placeholder="Enter one spelling per line"
+            placeholder="Enter spellings (one per line)"
             class={{
               textarea: true,
               "textarea-bordered": true,
