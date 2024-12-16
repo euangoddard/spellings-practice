@@ -34,7 +34,7 @@ export default component$(() => {
             </div>
           </div>
         </div>
-        <ol class="list-decimal leading-relaxed">
+        <ol class="list-inside list-decimal leading-relaxed">
           <li class="mb-1">
             Listen to the word by clicking the{" "}
             <svg
