@@ -1,12 +1,19 @@
 import { component$, type ReadonlySignal } from "@builder.io/qwik";
-import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
+import {
+  routeAction$,
+  routeLoader$,
+  type DocumentHead,
+} from "@builder.io/qwik-city";
 import { PracticeProgress } from "~/components/practice-progress/practice-progress";
 import { SpellingChallenge } from "~/components/spelling-challenge/spelling-challenge";
+import { scoreCookieName } from "~/shared/constants";
 import { type Challenge, resolveChallenge } from "~/shared/loaders";
 
 export default component$(() => {
   const challengeSession =
     useChallengeSession() as ReadonlySignal<ChallengeSession>;
+
+  const incrementScore = useIncrementScore();
 
   const nextUrl = getNextUrl(
     challengeSession.value.challenge,
@@ -28,6 +35,7 @@ export default component$(() => {
         word={challengeSession.value.word}
         audioUrl={challengeSession.value.audioFile}
         nextUrl={nextUrl}
+        onCorrect$={() => incrementScore.submit()}
       />
     </div>
   );
@@ -83,3 +91,18 @@ export const useChallengeSession = routeLoader$<ChallengeSession | undefined>(
     }
   },
 );
+
+export const useIncrementScore = routeAction$((_, { cookie }) => {
+  const scoreCookie = cookie.get(scoreCookieName);
+
+  let newScore = 1;
+  if (scoreCookie) {
+    newScore = scoreCookie.number() + 1;
+  }
+  cookie.set(scoreCookieName, newScore, { path: "/" });
+
+  return {
+    success: true,
+    score: newScore,
+  };
+});

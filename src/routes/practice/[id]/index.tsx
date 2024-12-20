@@ -1,19 +1,18 @@
+import { component$, type ReadonlySignal } from "@builder.io/qwik";
 import {
-  component$,
-  useVisibleTask$,
-  type ReadonlySignal,
-} from "@builder.io/qwik";
-import { type DocumentHead, Link, routeLoader$ } from "@builder.io/qwik-city";
+  type DocumentHead,
+  routeAction$,
+  routeLoader$,
+  useNavigate,
+} from "@builder.io/qwik-city";
 import { BottomNav } from "~/components/bottom-nav/bottom-nav";
+import { scoreCookieName } from "~/shared/constants";
 import { type Challenge, resolveChallenge } from "~/shared/loaders";
-import { sessionStore } from "~/shared/session-store";
 
 export default component$(() => {
   const challenge = useChallenge() as ReadonlySignal<Challenge>;
-  // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$(() => {
-    sessionStore.set("score", 0);
-  });
+  const clearScore = useClearScore();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -61,12 +60,16 @@ export default component$(() => {
         </ol>
       </div>
       <BottomNav>
-        <Link
-          href={`/practice/${challenge.value.id}/1/`}
+        <button
+          type="button"
           class="btn btn-primary btn-block"
+          onClick$={async () => {
+            await clearScore.submit();
+            navigate(`/practice/${challenge.value.id}/1/`);
+          }}
         >
           Start challenge
-        </Link>
+        </button>
       </BottomNav>
     </>
   );
@@ -97,3 +100,10 @@ export const useChallenge = routeLoader$<Challenge | undefined>(
     }
   },
 );
+
+export const useClearScore = routeAction$((_, { cookie }) => {
+  cookie.delete(scoreCookieName, { path: "/" });
+  return {
+    success: true,
+  };
+});

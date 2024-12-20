@@ -1,18 +1,15 @@
 import {
-  $,
   component$,
   type QRL,
   useSignal,
   useStore,
   useStyles$,
-  useVisibleTask$,
 } from "@builder.io/qwik";
 import { Keyboard } from "../keyboard/keyboard";
 import { AnswerState } from "~/shared/models";
 import { AnswerNotification } from "../answer-notification/answer-notification";
 import styles from "./spelling-challenge.css?inline";
 import { ContinueButton } from "../continue-button/continue-button";
-import { sessionStore } from "~/shared/session-store";
 import { vibrate } from "~/shared/vibrate";
 import { AnswerValue } from "../answer-value/answer-value";
 
@@ -20,37 +17,20 @@ export interface SpellingChallengeProps {
   word: string;
   audioUrl: string | null;
   nextUrl: string;
-}
-
-interface SpellingStore {
-  state: AnswerState;
-  answer: string;
-  attempt: number;
-  score: number;
-  incrementScore: QRL<(this: SpellingStore) => void>;
+  onCorrect$: QRL<() => void>;
 }
 
 const maxAttempts = 3;
 
 export const SpellingChallenge = component$<SpellingChallengeProps>(
-  ({ word, audioUrl, nextUrl }) => {
+  ({ word, audioUrl, nextUrl, onCorrect$ }) => {
     useStyles$(styles);
-    const store = useStore<SpellingStore>({
+    const store = useStore({
       state: AnswerState.Pending,
       answer: "",
-      score: 0,
       attempt: 1,
-      incrementScore: $(function (this: SpellingStore) {
-        this.score += 1;
-        sessionStore.set("score", this.score);
-      }),
     });
     const audioRef = useSignal<HTMLAudioElement>();
-
-    // eslint-disable-next-line qwik/no-use-visible-task
-    useVisibleTask$(() => {
-      store.score = sessionStore.get("score") || 0;
-    });
 
     return (
       <>
@@ -93,7 +73,7 @@ export const SpellingChallenge = component$<SpellingChallengeProps>(
                 vibrate(50);
                 if (store.answer === word) {
                   store.state = AnswerState.Correct;
-                  store.incrementScore();
+                  onCorrect$();
                 } else if (store.attempt < maxAttempts) {
                   store.attempt += 1;
                   store.state = AnswerState.Mistake;
@@ -120,7 +100,7 @@ export const SpellingChallenge = component$<SpellingChallengeProps>(
                   vibrate(50);
                   if (store.answer === word) {
                     store.state = AnswerState.Correct;
-                    store.incrementScore();
+                    onCorrect$();
                   } else if (store.attempt < maxAttempts) {
                     store.attempt += 1;
                     store.state = AnswerState.Mistake;

@@ -1,22 +1,19 @@
 import {
   component$,
-  useSignal,
   useVisibleTask$,
   type ReadonlySignal,
 } from "@builder.io/qwik";
 import { type DocumentHead, Link, routeLoader$ } from "@builder.io/qwik-city";
 import { BottomNav } from "~/components/bottom-nav/bottom-nav";
 import { type Challenge, resolveChallenge } from "~/shared/loaders";
-import { sessionStore } from "~/shared/session-store";
 import { create as createConfetti } from "canvas-confetti";
 
 export default component$(() => {
   const challenge = useChallenge() as ReadonlySignal<Challenge>;
-  const score = useSignal<number | null>(null);
+  const score = useScore();
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(() => {
-    score.value = sessionStore.get("score");
     buildConfetti(0.5, 0.8);
   });
 
@@ -90,3 +87,7 @@ export const useChallenge = routeLoader$<Challenge | undefined>(
     }
   },
 );
+
+export const useScore = routeLoader$<number>(({ cookie }) => {
+  return cookie.get("score")?.number() ?? 0;
+});
