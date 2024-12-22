@@ -5,6 +5,7 @@ import { SpellingChallenge } from "~/components/spelling-challenge/spelling-chal
 import { quizCutOff } from "~/shared/constants";
 import { type Challenge, resolveChallenge } from "~/shared/loader-helpers";
 import { useIncrementScore } from "~/shared/actions";
+import { getWordAudioFile } from "~/shared/words-db";
 export { useIncrementScore } from "~/shared/actions";
 
 export default component$(() => {
@@ -85,7 +86,7 @@ export const useQuizSession = routeLoader$<QuizSession | undefined>(
     const spellings = challenge?.spellings ?? [];
     const word = spellings[indices[index]];
     if (word) {
-      const audioFile = await WORDS.get(word);
+      const audioFile = await getWordAudioFile(WORDS, word);
       return { index, word, audioFile, indices, challenge: challenge! };
     } else {
       redirect(302, "/");

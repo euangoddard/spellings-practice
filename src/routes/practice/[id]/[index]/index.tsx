@@ -4,6 +4,7 @@ import { PracticeProgress } from "~/components/practice-progress/practice-progre
 import { SpellingChallenge } from "~/components/spelling-challenge/spelling-challenge";
 import { type Challenge, resolveChallenge } from "~/shared/loader-helpers";
 import { useIncrementScore } from "~/shared/actions";
+import { getWordAudioFile } from "~/shared/words-db";
 export { useIncrementScore } from "~/shared/actions";
 
 export default component$(() => {
@@ -77,7 +78,7 @@ export const useChallengeSession = routeLoader$<ChallengeSession | undefined>(
     const spellings = challenge?.spellings ?? [];
     const word = spellings[index];
     if (word) {
-      const audioFile = await WORDS.get(word);
+      const audioFile = await getWordAudioFile(WORDS, word);
       return { index, word, audioFile, challenge: challenge! };
     } else {
       redirect(302, "/");
