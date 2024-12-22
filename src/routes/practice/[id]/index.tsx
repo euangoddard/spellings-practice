@@ -131,12 +131,13 @@ const buildQuizUrl = (
   if (wordCount < quizCutOff) {
     return null;
   }
-  const url = new URL(`/quiz/${challengeId}/1/`, import.meta.url);
+
+  const searchParams = new URLSearchParams();
   for (const index of getNRandomIndices(quizCutOff, wordCount)) {
-    url.searchParams.append("i", index.toString());
+    searchParams.append("i", index.toString());
   }
 
-  return url.pathname + url.search;
+  return `/quiz/${challengeId}/1/?${searchParams.toString()}`;
 };
 
 function* getNRandomIndices(n: number, max: number) {
