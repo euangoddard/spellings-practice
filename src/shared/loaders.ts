@@ -1,18 +1,6 @@
-export interface Challenge {
-  id: string;
-  name: string;
-  spellings: readonly string[];
-}
+import { routeLoader$ } from "@builder.io/qwik-city";
 
-export const resolveChallenge = async (
-  params: Record<string, string>,
-  spellings: KVNamespace,
-): Promise<Challenge | null> => {
-  let challenge: Challenge | null;
-  try {
-    challenge = JSON.parse((await spellings.get(params["id"])) ?? "{}");
-  } catch {
-    return (challenge = null);
-  }
-  return { ...challenge!, id: params["id"] };
-};
+// eslint-disable-next-line qwik/loader-location
+export const useScore = routeLoader$<number>(({ cookie }) => {
+  return cookie.get("score")?.number() ?? 0;
+});

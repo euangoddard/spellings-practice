@@ -5,8 +5,11 @@ import {
 } from "@builder.io/qwik";
 import { type DocumentHead, Link, routeLoader$ } from "@builder.io/qwik-city";
 import { BottomNav } from "~/components/bottom-nav/bottom-nav";
-import { type Challenge, resolveChallenge } from "~/shared/loaders";
-import { create as createConfetti } from "canvas-confetti";
+import { buildConfetti } from "~/shared/confetti";
+import { quizCutOff } from "~/shared/constants";
+import { type Challenge, resolveChallenge } from "~/shared/loader-helpers";
+import { useScore } from "~/shared/loaders";
+export { useScore } from "~/shared/loaders";
 
 export default component$(() => {
   const challenge = useChallenge() as ReadonlySignal<Challenge>;
@@ -23,30 +26,27 @@ export default component$(() => {
         <h2 class="mb-4 text-xl font-medium">You're done!</h2>
         <p class="text-l mb-4">
           You have finished{" "}
-          <span class="text-accent">{challenge.value.name}</span> spelling
-          challenge!
+          <span class="text-accent">{challenge.value.name}</span> quiz!
         </p>
         <div class="mb-4 flex justify-center">
           <div class="stats shadow">
             <div class="stat place-items-center">
               <div class="stat-title">You scored</div>
               <div class="stat-value text-secondary">{score.value}</div>
-              <div class="stat-desc">
-                out of a possible {challenge.value.spellings.length}
-              </div>
+              <div class="stat-desc">out of a possible {quizCutOff}</div>
             </div>
           </div>
         </div>
       </div>
       <BottomNav>
+        <Link href="/" class="btn btn-secondary btn-block mb-2">
+          Create a new challenge
+        </Link>
         <Link
           href={`/practice/${challenge.value.id}/`}
-          class="btn btn-primary btn-block mb-2"
+          class="btn btn-primary btn-block"
         >
           Play again
-        </Link>
-        <Link href="/" class="btn btn-secondary btn-block">
-          Create a new challenge
         </Link>
       </BottomNav>
     </>
@@ -56,24 +56,15 @@ export default component$(() => {
 export const head: DocumentHead = ({ resolveValue }) => {
   const challenge = resolveValue(useChallenge);
   return {
-    title: `Spelling practice: "${challenge!.name}" complete!`,
+    title: `Quiz: "${challenge!.name}" complete!`,
     meta: [
       {
         name: "description",
-        content: `You finished "${challenge!.name}"`,
+        content: `You finished "${challenge!.name}" quiz`,
       },
     ],
   };
 };
-
-function buildConfetti(x: number, y: number): void {
-  const confetti = createConfetti(undefined, { resize: true, useWorker: true });
-  confetti({
-    particleCount: 200,
-    spread: 100,
-    origin: { x, y },
-  });
-}
 
 export const useChallenge = routeLoader$<Challenge | undefined>(
   async ({ params, platform, status }) => {
@@ -87,7 +78,3 @@ export const useChallenge = routeLoader$<Challenge | undefined>(
     }
   },
 );
-
-export const useScore = routeLoader$<number>(({ cookie }) => {
-  return cookie.get("score")?.number() ?? 0;
-});

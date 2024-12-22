@@ -1,32 +1,28 @@
 import { component$, type ReadonlySignal } from "@builder.io/qwik";
-import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
+import { type DocumentHead, routeLoader$ } from "@builder.io/qwik-city";
 import { PracticeProgress } from "~/components/practice-progress/practice-progress";
 import { SpellingChallenge } from "~/components/spelling-challenge/spelling-challenge";
+import { quizCutOff } from "~/shared/constants";
 import { type Challenge, resolveChallenge } from "~/shared/loader-helpers";
 import { useIncrementScore } from "~/shared/actions";
 export { useIncrementScore } from "~/shared/actions";
 
 export default component$(() => {
-  const challengeSession =
-    useChallengeSession() as ReadonlySignal<ChallengeSession>;
-
+  const quizSession = useQuizSession() as ReadonlySignal<QuizSession>;
   const incrementScore = useIncrementScore();
 
-  const { challenge, index } = challengeSession.value;
-  const nextUrl = getNextUrl(challenge, index);
+  const { challenge, index, indices } = quizSession.value;
+  const nextUrl = getNextUrl(challenge, indices, index);
 
   return (
     <div class="mx-auto max-w-xl">
-      <PracticeProgress
-        total={challenge.spellings.length}
-        completed={index + 1}
-      >
-        <h2 class="mb-2 text-xl font-medium">{challenge.name} challenge</h2>
+      <PracticeProgress total={quizCutOff} completed={index + 1}>
+        <h2 class="mb-2 text-xl font-medium">{challenge.name} quiz</h2>
       </PracticeProgress>
 
       <SpellingChallenge
-        word={challengeSession.value.word}
-        audioUrl={challengeSession.value.audioFile}
+        word={quizSession.value.word}
+        audioUrl={quizSession.value.audioFile}
         nextUrl={nextUrl}
         onCorrect$={() => incrementScore.submit()}
       />
@@ -34,51 +30,63 @@ export default component$(() => {
   );
 });
 
-const getNextUrl = (challenge: Challenge, index: number) => {
-  if (index < challenge.spellings.length - 1) {
-    return `/practice/${challenge.id}/${index + 2}/`;
+const getNextUrl = (
+  challenge: Challenge,
+  indices: readonly number[],
+  index: number,
+) => {
+  if (index < quizCutOff - 1) {
+    const searchParams = new URLSearchParams();
+    for (const i of indices) {
+      searchParams.append("i", i.toString());
+    }
+    return `/quiz/${challenge.id}/${index + 2}/?${searchParams.toString()}`;
   }
-  return `/complete/practice/${challenge.id}/`;
+  return `/complete/quiz/${challenge.id}/`;
 };
 
 export const head: DocumentHead = ({ resolveValue }) => {
-  const challengeSession = resolveValue(useChallengeSession);
+  const challengeSession = resolveValue(useQuizSession);
   const challengeName = challengeSession?.challenge.name ?? "Spelling practice";
   const index = (challengeSession?.index ?? 0) + 1;
   return {
-    title: `Spelling practice: "${challengeName}" - word ${index}`,
+    title: `Quiz for: "${challengeName}" - word ${index}`,
     meta: [
       {
         name: "description",
-        content: `Challenge "${challengeName}", word ${index} of ${challengeSession!.challenge.spellings.length} words`,
+        content: `Quiz "${challengeName}", word ${index} of ${quizCutOff}`,
       },
     ],
   };
 };
 
-interface ChallengeSession {
+interface QuizSession {
   index: number;
+  indices: readonly number[];
   word: string;
   audioFile: string | null;
   challenge: Challenge;
 }
 
-export const useChallengeSession = routeLoader$<ChallengeSession | undefined>(
-  async ({ params, platform, redirect }) => {
+export const useQuizSession = routeLoader$<QuizSession | undefined>(
+  async ({ params, query, platform, redirect }) => {
     const { WORDS, SPELLINGS } = platform.env as {
       WORDS: KVNamespace;
       SPELLINGS: KVNamespace;
     };
     const indexParam = params["index"];
+    const indices = query
+      .getAll("i")
+      .map((index: string) => parseInt(index, 10));
 
     // The index is 1-based in the URI, but 0-based in the array
     const index = parseInt(indexParam, 10) - 1;
     const challenge = await resolveChallenge(params, SPELLINGS);
     const spellings = challenge?.spellings ?? [];
-    const word = spellings[index];
+    const word = spellings[indices[index]];
     if (word) {
       const audioFile = await WORDS.get(word);
-      return { index, word, audioFile, challenge: challenge! };
+      return { index, word, audioFile, indices, challenge: challenge! };
     } else {
       redirect(302, "/");
     }

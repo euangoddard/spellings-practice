@@ -1,4 +1,4 @@
-import { component$, type ReadonlySignal } from "@builder.io/qwik";
+import { component$, useSignal, type ReadonlySignal } from "@builder.io/qwik";
 import {
   type DocumentHead,
   routeAction$,
@@ -6,13 +6,17 @@ import {
   useNavigate,
 } from "@builder.io/qwik-city";
 import { BottomNav } from "~/components/bottom-nav/bottom-nav";
-import { scoreCookieName } from "~/shared/constants";
-import { type Challenge, resolveChallenge } from "~/shared/loaders";
+import { quizCutOff, scoreCookieName } from "~/shared/constants";
+import { type Challenge, resolveChallenge } from "~/shared/loader-helpers";
 
 export default component$(() => {
   const challenge = useChallenge() as ReadonlySignal<Challenge>;
   const clearScore = useClearScore();
   const navigate = useNavigate();
+
+  const quizUrl = useSignal(
+    buildQuizUrl(challenge.value.id, challenge.value.spellings.length),
+  );
 
   return (
     <>
@@ -60,6 +64,18 @@ export default component$(() => {
         </ol>
       </div>
       <BottomNav>
+        {quizUrl.value && (
+          <button
+            type="button"
+            class="btn btn-secondary btn-block mb-2"
+            onClick$={async () => {
+              await clearScore.submit();
+              navigate(quizUrl.value!);
+            }}
+          >
+            Start quiz ({quizCutOff} random words)
+          </button>
+        )}
         <button
           type="button"
           class="btn btn-primary btn-block"
@@ -107,3 +123,29 @@ export const useClearScore = routeAction$((_, { cookie }) => {
     success: true,
   };
 });
+
+const buildQuizUrl = (
+  challengeId: string,
+  wordCount: number,
+): string | null => {
+  if (wordCount < quizCutOff) {
+    return null;
+  }
+  const url = new URL(`/quiz/${challengeId}/1/`, import.meta.url);
+  for (const index of getNRandomIndices(quizCutOff, wordCount)) {
+    url.searchParams.append("i", index.toString());
+  }
+
+  return url.pathname + url.search;
+};
+
+function* getNRandomIndices(n: number, max: number) {
+  const indices = new Set<number>();
+  while (indices.size < n) {
+    const index = Math.floor(Math.random() * max);
+    if (!indices.has(index)) {
+      indices.add(index);
+      yield index;
+    }
+  }
+}
