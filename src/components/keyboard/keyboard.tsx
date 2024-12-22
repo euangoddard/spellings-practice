@@ -26,9 +26,8 @@ export const Keyboard = component$<KeyboardProps>(({ onKey$ }) => {
         <div class="mb-1 flex justify-center gap-1" key={index}>
           {row.split("").map((key) => (
             <button
-              class="btn btn-lg grow px-[12px] md:flex-none md:px-4"
+              class="btn btn-lg grow touch-none px-[12px] md:flex-none md:px-4"
               key={key}
-              preventdefault:pointerup
               onPointerUp$={() => {
                 vibrate(10);
                 onKey$(key);
