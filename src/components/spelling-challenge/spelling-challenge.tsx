@@ -31,10 +31,14 @@ export const SpellingChallenge = component$<SpellingChallengeProps>(
       attempt: 1,
     });
     const audioRef = useSignal<HTMLAudioElement>();
+    const correctSound = useSignal<HTMLAudioElement>();
+    const incorrectSound = useSignal<HTMLAudioElement>();
 
     return (
       <>
         {audioUrl && <audio src={audioUrl} ref={audioRef} />}
+        <audio src="/sounds/correct.mp3" ref={correctSound} />
+        <audio src="/sounds/incorrect.mp3" ref={incorrectSound} />
         <button
           class="btn btn-secondary btn-block mb-4"
           type="button"
@@ -73,12 +77,15 @@ export const SpellingChallenge = component$<SpellingChallengeProps>(
                 vibrate(50);
                 if (store.answer === word) {
                   store.state = AnswerState.Correct;
+                  correctSound.value?.play();
                   onCorrect$();
                 } else if (store.attempt < maxAttempts) {
                   store.attempt += 1;
                   store.state = AnswerState.Mistake;
+                  incorrectSound.value?.play();
                 } else {
                   store.state = AnswerState.Incorrect;
+                  incorrectSound.value?.play();
                 }
               } else {
                 store.answer += key;
@@ -100,12 +107,15 @@ export const SpellingChallenge = component$<SpellingChallengeProps>(
                   vibrate(50);
                   if (store.answer === word) {
                     store.state = AnswerState.Correct;
+                    correctSound.value?.play();
                     onCorrect$();
                   } else if (store.attempt < maxAttempts) {
                     store.attempt += 1;
                     store.state = AnswerState.Mistake;
+                    incorrectSound.value?.play();
                   } else {
                     store.state = AnswerState.Incorrect;
+                    incorrectSound.value?.play();
                   }
                 }}
               >
