@@ -69,7 +69,7 @@ export const head: DocumentHead = ({ resolveValue }) => {
 export const useChallenge = routeLoader$<Challenge | undefined>(
   async ({ params, platform, status }) => {
     const { SPELLINGS } = platform.env as { SPELLINGS: KVNamespace };
-    const challenge = await resolveChallenge(params, SPELLINGS);
+    const challenge = await resolveChallenge(params.id, SPELLINGS);
 
     if (!challenge?.spellings) {
       status(404);

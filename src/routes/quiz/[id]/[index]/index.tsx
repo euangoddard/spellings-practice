@@ -82,7 +82,7 @@ export const useQuizSession = routeLoader$<QuizSession | undefined>(
 
     // The index is 1-based in the URI, but 0-based in the array
     const index = parseInt(indexParam, 10) - 1;
-    const challenge = await resolveChallenge(params, SPELLINGS);
+    const challenge = await resolveChallenge(params.id, SPELLINGS);
     const spellings = challenge?.spellings ?? [];
     const word = spellings[indices[index]];
     if (word) {

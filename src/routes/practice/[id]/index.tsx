@@ -6,11 +6,27 @@ import {
   useNavigate,
 } from "@builder.io/qwik-city";
 import { BottomNav } from "~/components/bottom-nav/bottom-nav";
-import { quizCutOff, scoreCookieName } from "~/shared/constants";
-import { type Challenge, resolveChallenge } from "~/shared/loader-helpers";
+import { SaveButton } from "~/components/save-button/save-button";
+import {
+  cookieOptions,
+  quizCutOff,
+  saveCookieName,
+  scoreCookieName,
+} from "~/shared/constants";
+import {
+  type Challenge,
+  getSavedChallenges,
+  resolveChallenge,
+} from "~/shared/loader-helpers";
 
 export default component$(() => {
   const challenge = useChallenge() as ReadonlySignal<Challenge>;
+
+  const isSaved = useIsSaved();
+  const savePractice = useSavePractice();
+  const unSavePractice = useUnSavePractice();
+  const isSaving = savePractice.isRunning || unSavePractice.isRunning;
+
   const clearScore = useClearScore();
   const navigate = useNavigate();
 
@@ -64,6 +80,12 @@ export default component$(() => {
         </ol>
       </div>
       <BottomNav>
+        <SaveButton
+          isSaved={isSaved.value}
+          isSaving={isSaving}
+          onSave$={async () => await savePractice.submit()}
+          onRemove$={async () => await unSavePractice.submit()}
+        />
         {quizUrl.value && (
           <button
             type="button"
@@ -107,7 +129,7 @@ export const head: DocumentHead = ({ resolveValue }) => {
 export const useChallenge = routeLoader$<Challenge | undefined>(
   async ({ params, platform, status }) => {
     const { SPELLINGS } = platform.env as { SPELLINGS: KVNamespace };
-    const challenge = await resolveChallenge(params, SPELLINGS);
+    const challenge = await resolveChallenge(params.id, SPELLINGS);
 
     if (!challenge?.spellings) {
       status(404);
@@ -150,3 +172,37 @@ function* getNRandomIndices(n: number, max: number) {
     }
   }
 }
+
+export const useIsSaved = routeLoader$<boolean>(({ cookie, params }) => {
+  const challengeId = params.id;
+  const savedIds = getSavedChallenges(cookie);
+  return savedIds.includes(challengeId);
+});
+
+export const useSavePractice = routeAction$((_, { params, cookie }) => {
+  const challengeId = params.id;
+  const savedIds = getSavedChallenges(cookie);
+  if (!savedIds.includes(challengeId)) {
+    cookie.set(
+      saveCookieName,
+      [...savedIds, challengeId].join(","),
+      cookieOptions,
+    );
+  }
+  return {
+    success: true,
+  };
+});
+
+export const useUnSavePractice = routeAction$((_, { params, cookie }) => {
+  const challengeId = params.id;
+  const savedIds = getSavedChallenges(cookie);
+  cookie.set(
+    saveCookieName,
+    savedIds.filter((id) => id !== challengeId).join(","),
+    cookieOptions,
+  );
+  return {
+    success: true,
+  };
+});

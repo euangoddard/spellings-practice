@@ -1,5 +1,5 @@
 import { routeAction$ } from "@builder.io/qwik-city";
-import { scoreCookieName } from "./constants";
+import { cookieOptions, scoreCookieName } from "./constants";
 
 // eslint-disable-next-line qwik/loader-location
 export const useIncrementScore = routeAction$((_, { cookie }) => {
@@ -9,7 +9,7 @@ export const useIncrementScore = routeAction$((_, { cookie }) => {
   if (scoreCookie) {
     newScore = scoreCookie.number() + 1;
   }
-  cookie.set(scoreCookieName, newScore, { path: "/" });
+  cookie.set(scoreCookieName, newScore, cookieOptions);
 
   return {
     success: true,

@@ -1,3 +1,6 @@
+import { type Cookie } from "@builder.io/qwik-city";
+import { saveCookieName } from "./constants";
+
 export interface Challenge {
   id: string;
   name: string;
@@ -5,14 +8,19 @@ export interface Challenge {
 }
 
 export const resolveChallenge = async (
-  params: Record<string, string>,
+  challengeId: string,
   spellings: KVNamespace,
 ): Promise<Challenge | null> => {
   let challenge: Challenge | null;
   try {
-    challenge = JSON.parse((await spellings.get(params["id"])) ?? "{}");
+    challenge = JSON.parse((await spellings.get(challengeId)) ?? "{}");
   } catch {
-    return (challenge = null);
+    return null;
   }
-  return { ...challenge!, id: params["id"] };
+  return { ...challenge!, id: challengeId };
+};
+
+export const getSavedChallenges = (cookie: Cookie): readonly string[] => {
+  const saveCookie = cookie.get(saveCookieName);
+  return saveCookie?.value.split(",") ?? [];
 };
