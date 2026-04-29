@@ -6,11 +6,11 @@ export interface AnswerValueProps {
 
 export const AnswerValue = component$<AnswerValueProps>(({ value }) => {
   return (
-    <div class="mb-4 flex border-b border-accent p-4 text-lg">
+    <div class="border-accent mb-4 flex border-b p-4 text-lg">
       {value}
-      <div class="cursor w-[1px] border-r border-neutral"></div>
+      <div class="cursor border-neutral w-[1px] border-r"></div>
       {!value && (
-        <span class="select-none text-neutral-content">
+        <span class="text-neutral-content select-none">
           Spell the word you hear
         </span>
       )}

@@ -1,23 +1,42 @@
 import { type Cookie } from "@builder.io/qwik-city";
 import { saveCookieName } from "./constants";
 
+export interface Spelling {
+  word: string;
+  hint?: string;
+}
+
 export interface Challenge {
   id: string;
   name: string;
-  spellings: readonly string[];
+  spellings: readonly Spelling[];
 }
+
+const normalizeSpellings = (raw: unknown): Spelling[] => {
+  if (!Array.isArray(raw)) return [];
+  return raw.map((s) =>
+    typeof s === "string"
+      ? { word: s }
+      : { word: s.word ?? "", ...(s.hint ? { hint: s.hint } : {}) },
+  );
+};
 
 export const resolveChallenge = async (
   challengeId: string,
   spellings: KVNamespace,
 ): Promise<Challenge | null> => {
-  let challenge: Challenge | null;
+  let raw: { name?: string; spellings?: unknown } | null;
   try {
-    challenge = JSON.parse((await spellings.get(challengeId)) ?? "{}");
+    raw = JSON.parse((await spellings.get(challengeId)) ?? "{}");
   } catch {
     return null;
   }
-  return { ...challenge!, id: challengeId };
+  if (!raw?.name) return null;
+  return {
+    id: challengeId,
+    name: raw.name,
+    spellings: normalizeSpellings(raw.spellings),
+  };
 };
 
 export const getSavedChallenges = (cookie: Cookie): readonly string[] => {

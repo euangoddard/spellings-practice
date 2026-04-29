@@ -89,7 +89,7 @@ export default component$(() => {
         {quizUrl.value && (
           <button
             type="button"
-            class="btn btn-secondary w-full mb-2"
+            class="btn btn-secondary mb-2 w-full"
             onClick$={async () => {
               await clearScore.submit();
               navigate(quizUrl.value!);

@@ -27,6 +27,7 @@ export default component$(() => {
 
       <SpellingChallenge
         word={challengeSession.value.word}
+        hint={challengeSession.value.hint}
         audioUrl={challengeSession.value.audioFile}
         nextUrl={nextUrl}
         onCorrect$={() => incrementScore.submit()}
@@ -60,6 +61,7 @@ export const head: DocumentHead = ({ resolveValue }) => {
 interface ChallengeSession {
   index: number;
   word: string;
+  hint?: string;
   audioFile: string | null;
   challenge: Challenge;
 }
@@ -76,10 +78,17 @@ export const useChallengeSession = routeLoader$<ChallengeSession | undefined>(
     const index = parseInt(indexParam, 10) - 1;
     const challenge = await resolveChallenge(params.id, SPELLINGS);
     const spellings = challenge?.spellings ?? [];
-    const word = spellings[index];
+    const spellingEntry = spellings[index];
+    const word = spellingEntry?.word;
     if (word) {
       const audioFile = await getWordAudioFile(WORDS, word);
-      return { index, word, audioFile, challenge: challenge! };
+      return {
+        index,
+        word,
+        hint: spellingEntry.hint,
+        audioFile,
+        challenge: challenge!,
+      };
     } else {
       redirect(302, "/");
     }

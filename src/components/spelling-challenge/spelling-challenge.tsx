@@ -15,6 +15,7 @@ import { AnswerValue } from "../answer-value/answer-value";
 
 export interface SpellingChallengeProps {
   word: string;
+  hint?: string;
   audioUrl: string | null;
   nextUrl: string;
   onCorrect$: QRL<() => void>;
@@ -22,8 +23,13 @@ export interface SpellingChallengeProps {
 
 const maxAttempts = 3;
 
+const redactWord = (hint: string, word: string): string => {
+  const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return hint.replace(new RegExp(escaped, "gi"), "_".repeat(word.length));
+};
+
 export const SpellingChallenge = component$<SpellingChallengeProps>(
-  ({ word, audioUrl, nextUrl, onCorrect$ }) => {
+  ({ word, hint, audioUrl, nextUrl, onCorrect$ }) => {
     useStyles$(styles);
     const store = useStore({
       state: AnswerState.Pending,
@@ -40,7 +46,7 @@ export const SpellingChallenge = component$<SpellingChallengeProps>(
         <audio src="/sounds/correct.mp3" ref={correctSound} />
         <audio src="/sounds/incorrect.mp3" ref={incorrectSound} />
         <button
-          class="btn btn-secondary w-full mb-4"
+          class="btn btn-secondary mb-4 w-full"
           type="button"
           onClick$={() => {
             if (audioRef.value) {
@@ -67,8 +73,18 @@ export const SpellingChallenge = component$<SpellingChallengeProps>(
           </svg>
           Listen to word
         </button>
+        {hint && (
+          <div class="rounded-box bg-base-200 mb-4 px-4 py-3">
+            <p class="text-base-content/50 mb-1 text-xs font-medium tracking-wide uppercase">
+              Hint
+            </p>
+            <p class="text-base-content/70 text-sm italic">
+              "{redactWord(hint, word)}"
+            </p>
+          </div>
+        )}
         <AnswerValue value={store.answer} />
-        <div class="fixed bottom-0 left-0 right-0">
+        <div class="fixed right-0 bottom-0 left-0">
           <Keyboard
             onKey$={(key: string) => {
               if (key === "⌫") {

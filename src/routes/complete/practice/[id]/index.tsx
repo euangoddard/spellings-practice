@@ -41,7 +41,7 @@ export default component$(() => {
         </div>
       </div>
       <BottomNav>
-        <Link href="/" class="btn btn-secondary w-full mb-2">
+        <Link href="/" class="btn btn-secondary mb-2 w-full">
           Create a new challenge
         </Link>
         <Link
