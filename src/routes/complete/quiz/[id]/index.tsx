@@ -39,12 +39,12 @@ export default component$(() => {
         </div>
       </div>
       <BottomNav>
-        <Link href="/" class="btn btn-secondary btn-block mb-2">
+        <Link href="/" class="btn btn-secondary w-full mb-2">
           Create a new challenge
         </Link>
         <Link
           href={`/practice/${challenge.value.id}/`}
-          class="btn btn-primary btn-block"
+          class="btn btn-primary w-full"
         >
           Play again
         </Link>

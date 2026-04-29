@@ -10,7 +10,7 @@ export const ContinueButton = component$<ContinueButtonProps>(
   ({ state, nextUrl }) => {
     const isLoading = useSignal(false);
     const btnClasses = [
-      "btn btn-block",
+      "btn w-full",
       state === AnswerState.Correct ? "btn-success" : "btn-error",
     ];
     if (isLoading.value) {

@@ -89,7 +89,7 @@ export default component$(() => {
         {quizUrl.value && (
           <button
             type="button"
-            class="btn btn-secondary btn-block mb-2"
+            class="btn btn-secondary w-full mb-2"
             onClick$={async () => {
               await clearScore.submit();
               navigate(quizUrl.value!);
@@ -100,7 +100,7 @@ export default component$(() => {
         )}
         <button
           type="button"
-          class="btn btn-primary btn-block"
+          class="btn btn-primary w-full"
           onClick$={async () => {
             await clearScore.submit();
             navigate(`/practice/${challenge.value.id}/1/`);

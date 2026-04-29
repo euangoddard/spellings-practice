@@ -34,7 +34,7 @@ export default component$(() => {
         )}
       </div>
       <BottomNav>
-        <Link class="btn btn-primary btn-block" href="/create">
+        <Link class="btn btn-primary w-full" href="/create">
           Create a new practice
         </Link>
       </BottomNav>

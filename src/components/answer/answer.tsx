@@ -80,7 +80,7 @@ export const Answer = component$<AnswerProps>(
               name="spelling"
               class={{
                 input: true,
-                "input-bordered": true,
+                "input-bordered": false,
                 "w-48": true,
                 grow: true,
                 "border-error": state.value == AnswerState.Incorrect,

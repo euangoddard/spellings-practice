@@ -40,7 +40,7 @@ export const SpellingChallenge = component$<SpellingChallengeProps>(
         <audio src="/sounds/correct.mp3" ref={correctSound} />
         <audio src="/sounds/incorrect.mp3" ref={incorrectSound} />
         <button
-          class="btn btn-secondary btn-block mb-4"
+          class="btn btn-secondary w-full mb-4"
           type="button"
           onClick$={() => {
             if (audioRef.value) {
@@ -100,7 +100,7 @@ export const SpellingChallenge = component$<SpellingChallengeProps>(
           >
             {store.state === AnswerState.Pending ? (
               <button
-                class="btn btn-primary btn-block"
+                class="btn btn-primary w-full"
                 disabled={store.answer === ""}
                 type="button"
                 onClick$={() => {
@@ -123,7 +123,7 @@ export const SpellingChallenge = component$<SpellingChallengeProps>(
               </button>
             ) : store.state === AnswerState.Mistake ? (
               <button
-                class="btn btn-warning btn-block"
+                class="btn btn-warning w-full"
                 type="button"
                 onClick$={() => {
                   vibrate(50);

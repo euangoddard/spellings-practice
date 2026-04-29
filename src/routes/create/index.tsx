@@ -26,7 +26,7 @@ export default component$(() => {
         <label
           class={{
             input: true,
-            "input-bordered": true,
+            "input-bordered": false,
             "mb-2": true,
             flex: true,
             "items-center": true,
@@ -43,12 +43,12 @@ export default component$(() => {
             autoComplete="off"
           />
         </label>
-        <div class="form-control">
+        <div>
           <textarea
             placeholder="Enter spellings (one per line)"
             class={{
               textarea: true,
-              "textarea-bordered": true,
+              "textarea-bordered": false,
               "textarea-lg": true,
               "mb-2": true,
               "min-h-80": true,
@@ -76,7 +76,7 @@ export default component$(() => {
             <span>{errorMessages.join("; ")}</span>
           </div>
         )}
-        <button class="btn btn-primary btn-block" type="submit">
+        <button class="btn btn-primary w-full" type="submit">
           Start
         </button>
       </Form>
